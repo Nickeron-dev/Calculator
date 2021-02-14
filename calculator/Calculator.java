@@ -11,9 +11,12 @@ public class Calculator implements ActionListener {
   JFrame frame;
   JTextField text;
   JButton one, two, three, four, five, six, seven, eight, nine, zero;
-  JButton equals, multiply, divide, minus, plus;
+  JButton equals, multiply, divide, minus, plus, clear;
   JCheckBox addToFile;
   boolean answerCheck = true;
+  String count = "";
+  MathActions actions = new MathActions();
+  static boolean isError = false;
 
   public Calculator() {
     // settings for frame
@@ -21,7 +24,7 @@ public class Calculator implements ActionListener {
     frame.setLayout(new FlowLayout());
     frame.setSize(500, 700);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.getContentPane().setBackground(new Color(255, 255, 255));
+    frame.getContentPane().setBackground(new Color(255, 1, 0));
 
     // initializing other elements
     text = new JTextField(20);
@@ -62,7 +65,7 @@ public class Calculator implements ActionListener {
     multiply = new JButton("*");
     multiply.addActionListener(this);
 
-    divide = new JButton("÷");
+    divide = new JButton("/");
     divide.addActionListener(this);
 
     minus = new JButton("-");
@@ -70,6 +73,9 @@ public class Calculator implements ActionListener {
 
     plus = new JButton("+");
     plus.addActionListener(this);
+
+    clear = new JButton("C");
+    clear.addActionListener(this);
 
     addToFile = new JCheckBox("Add to file", true);
     addToFile.addItemListener(new ItemListener() {
@@ -94,6 +100,8 @@ public class Calculator implements ActionListener {
     frame.add(divide);
     frame.add(minus);
     frame.add(plus);
+    frame.add(addToFile);
+    frame.add(clear);
 
     frame.setVisible(true); // making it visible
     frame.setResizable(false); // making it unresizable
@@ -101,14 +109,34 @@ public class Calculator implements ActionListener {
 
   // waiting for clicks
   public void actionPerformed(ActionEvent event) {
-    try {
-      int numericButton = Integer.parseInt(event.getActionCommand());
-
-    } catch(NumberFormatException exc) {
-      //
+    if(event.getActionCommand().equals("C")) {
+      text.setText("");
+      return;
     }
+    if(event.getActionCommand().equals("=")) {
+      count = text.getText();
+      System.out.println("this is number: " + count);
+      text.setText(String.valueOf(actions.count(count, answerCheck)));
+      if(isError) text.setText("Error");
+      isError = false;
+      count = "";
+      return;
+    }
+    text.setText(text.getText() + event.getActionCommand());
+    count += text.getText();
+
+    //try {
+    //  int numericButton = Integer.parseInt(event.getActionCommand());
+
+    //} catch(NumberFormatException exc) {
+      //
+    //}
 
 
+  }
+
+  public static void setError(boolean value) {
+    isError = value; // set method
   }
 
 }
