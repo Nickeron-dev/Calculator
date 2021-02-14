@@ -14,11 +14,16 @@ public class Calculator implements ActionListener {
   JButton equals, multiply, divide, minus, plus, clear, dot, root, pi, back;
   JCheckBox addToFile;
   boolean answerCheck = true;
-  String count = "";
+  String first = "";
+  String second = "";
   MathActions actions = new MathActions();
   static boolean isError = false;
   Font fontForButtons = new Font(Font.MONOSPACED, Font.PLAIN, 100);
   Font fontForBoxAndText = new Font(Font.MONOSPACED, Font.PLAIN, 50);
+  boolean minusAction = false;
+  boolean plusAction = false;
+  boolean multiplyAction = false;
+  boolean divideAction = false;
 
   public Calculator() {
     // settings for frame
@@ -31,6 +36,9 @@ public class Calculator implements ActionListener {
     // initializing other elements
     text = new JTextField(16);
     text.setFont(fontForBoxAndText);
+    text.setEditable(false);
+      // nothing
+      //System.out.println("Nothing");
 
     one = new JButton("1");
     one.addActionListener(this);
@@ -114,6 +122,7 @@ public class Calculator implements ActionListener {
 
     addToFile = new JCheckBox("Add to file", true);
     addToFile.addItemListener(new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent event) {
         answerCheck = false;
       }
@@ -153,30 +162,89 @@ public class Calculator implements ActionListener {
       text.setText("");
       return;
     }
-    if(event.getActionCommand().equals("=")) {
-      count = text.getText();
-      System.out.println("this is number: " + count);
-      text.setText(String.valueOf(actions.count(count, answerCheck)));
-      if(isError) text.setText("Error");
-      isError = false;
-      count = "";
+
+    if(event.getActionCommand().equals("←")) {
+      StringBuffer sb = new StringBuffer(text.getText());
+      sb.deleteCharAt(text.getText().length() - 1);
+      String str = sb.toString();
+      text.setText(str);
       return;
     }
+
+    if(event.getActionCommand().equals("=")) {
+      second = text.getText();
+
+      // adding
+      if(plusAction) {
+        StringBuilder sbuild = new StringBuilder(second);
+        sbuild.deleteCharAt(0);
+        second = sbuild.toString();
+        text.setText(String.valueOf(actions.plus(first, second, answerCheck)));
+        plusAction = false;
+      }
+
+      //minusing
+      if(minusAction) {
+        StringBuilder sbuild = new StringBuilder(second);
+        sbuild.deleteCharAt(0);
+        second = sbuild.toString();
+        text.setText(String.valueOf(actions.minus(first, second, answerCheck)));
+        minusAction = false;
+      }
+
+      // multiplying
+      if(multiplyAction) {
+        StringBuilder sbuild = new StringBuilder(second);
+        sbuild.deleteCharAt(0);
+        second = sbuild.toString();
+        text.setText(String.valueOf(actions.multiply(first, second, answerCheck)));
+        multiplyAction = false;
+      }
+
+      // dividing
+      if(divideAction) {
+        StringBuilder sbuild = new StringBuilder(second);
+        sbuild.deleteCharAt(0);
+        second = sbuild.toString();
+        text.setText(String.valueOf(actions.divide(first, second, answerCheck)));
+        divideAction = false;
+      }
+
+      if(isError) text.setText("Error");
+      isError = false;
+      first = "";
+      second = "";
+      return;
+    }
+
+    if(event.getActionCommand().equals("-")) {
+      first = text.getText();
+      text.setText(""); // clearing field
+      minusAction = true;
+    }
+
+    if(event.getActionCommand().equals("+")) {
+      first = text.getText();
+      text.setText(""); // clearing field
+      plusAction = true;
+    }
+
+    if(event.getActionCommand().equals("*")) {
+      first = text.getText();
+      text.setText(""); // clearing field
+      multiplyAction = true;
+    }
+
+    if(event.getActionCommand().equals("/")) {
+      first = text.getText();
+      text.setText(""); // clearing field
+      divideAction = true;
+    }
     text.setText(text.getText() + event.getActionCommand());
-    count += text.getText();
-
-    //try {
-    //  int numericButton = Integer.parseInt(event.getActionCommand());
-
-    //} catch(NumberFormatException exc) {
-      //
-    //}
-
-
+    second += text.getText();
   }
 
   public static void setError(boolean value) {
     isError = value; // set method
   }
-
 }
