@@ -6,30 +6,30 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+import java.lang.Math.*;
 
 public class Calculator implements ActionListener {
-  JFrame frame;
-  JTextField text;
-  JButton one, two, three, four, five, six, seven, eight, nine, zero;
-  JButton equals, multiply, divide, minus, plus, clear, dot, root, pi, back;
-  JCheckBox addToFile;
-  boolean answerCheck = true;
-  String first = "";
-  String second = "";
-  MathActions actions = new MathActions();
+  private JFrame frame;
+  private JTextField text, discription;
+  private JButton one, two, three, four, five, six, seven, eight, nine, zero;
+  private JButton equals, multiply, divide, minus, plus, clear, dot, root, pi, back;
+  private JButton submit;
+  private JCheckBox addToFile;
+  private String first = "";
+  private String second = "";
   static boolean isError = false;
-  Font fontForButtons = new Font(Font.MONOSPACED, Font.PLAIN, 100);
-  Font fontForBoxAndText = new Font(Font.MONOSPACED, Font.PLAIN, 50);
-  boolean minusAction = false;
-  boolean plusAction = false;
-  boolean multiplyAction = false;
-  boolean divideAction = false;
+  private Font fontForButtons = new Font(Font.MONOSPACED, Font.PLAIN, 100);
+  private Font fontForBoxAndText = new Font(Font.MONOSPACED, Font.PLAIN, 50);
+  private boolean minusAction = false;
+  private boolean plusAction = false;
+  private boolean multiplyAction = false;
+  private boolean divideAction = false;
 
-  public Calculator() {
+  public Calculator() throws IOException {
     // settings for frame
     frame = new JFrame("Calculator");
     frame.setLayout(new FlowLayout());
-    frame.setSize(510, 700);
+    frame.setSize(510, 680);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setBackground(new Color(255, 1, 0));
 
@@ -37,8 +37,10 @@ public class Calculator implements ActionListener {
     text = new JTextField(16);
     text.setFont(fontForBoxAndText);
     text.setEditable(false);
-      // nothing
-      //System.out.println("Nothing");
+      // I'll maybe add pressing buttons and writing it in calculator
+
+    discription = new JTextField(15);
+    discription.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
 
     one = new JButton("1");
     one.addActionListener(this);
@@ -120,14 +122,14 @@ public class Calculator implements ActionListener {
     back.addActionListener(this);
     back.setFont(fontForButtons);
 
+    submit = new JButton("submit");
+    submit.addActionListener(this);
+    submit.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
+
     addToFile = new JCheckBox("Add to file", true);
-    addToFile.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent event) {
-        answerCheck = false;
-      }
-    });
-    addToFile.setFont(fontForBoxAndText);
+    // ItemListener is not necessary here
+
+    addToFile.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
 
     frame.add(text);
     frame.add(clear);
@@ -150,6 +152,8 @@ public class Calculator implements ActionListener {
     frame.add(zero);
     frame.add(root);
     frame.add(equals);
+    frame.add(discription);
+    frame.add(submit);
     frame.add(addToFile);
 
     frame.setVisible(true); // making it visible
@@ -158,8 +162,22 @@ public class Calculator implements ActionListener {
 
   // waiting for clicks
   public void actionPerformed(ActionEvent event) {
+    if(event.getActionCommand().equals("submit")) {
+      String discriptionText = discription.getText();
+      try (FileWriter file = new FileWriter("countings.txt", true)) {
+        file.write("\n" + discriptionText + "\n");
+        discription.setText(""); // clearing
+        discriptionText = ""; // clearing
+        return; // otherwise, it will add it to text component(JTextField)
+        // I don't need to close file because it I use try-with-resources
+      } catch(IOException exc) {
+        discription.setText("Error");
+      }
+    }
     if(event.getActionCommand().equals("C")) {
-      text.setText("");
+      text.setText(""); // clearing jfield
+      first = ""; // clearing variables that contain numbers
+      second = "";
       return;
     }
 
@@ -173,48 +191,71 @@ public class Calculator implements ActionListener {
 
     if(event.getActionCommand().equals("=")) {
       second = text.getText();
+      double result;
 
-      // adding
-      if(plusAction) {
-        StringBuilder sbuild = new StringBuilder(second);
-        sbuild.deleteCharAt(0);
-        second = sbuild.toString();
-        text.setText(String.valueOf(actions.plus(first, second, answerCheck)));
-        plusAction = false;
+      try(FileWriter out = new FileWriter("countings.txt", true)) {
+        // adding
+        if(plusAction) {
+          StringBuilder sbuild = new StringBuilder(second);
+          sbuild.deleteCharAt(0);
+          second = sbuild.toString();
+          result = MathActions.plus(first, second);
+          text.setText(String.valueOf(result));
+          if(addToFile.isSelected()) {
+            out.write(first + " + " + second + " = " + result + "\n");
+          }
+          plusAction = false;
+        }
+
+        //minusing
+        if(minusAction) {
+          StringBuilder sbuild = new StringBuilder(second);
+          sbuild.deleteCharAt(0);
+          second = sbuild.toString();
+          result = MathActions.minus(first, second);
+          text.setText(String.valueOf(result));
+          if(addToFile.isSelected()) {
+            out.write(first + " - " + second + " = " + result + "\n");
+          }
+          minusAction = false;
+        }
+
+        // multiplying
+        if(multiplyAction) {
+          StringBuilder sbuild = new StringBuilder(second);
+          sbuild.deleteCharAt(0);
+          second = sbuild.toString();
+          result = MathActions.multiply(first, second);
+          text.setText(String.valueOf(result));
+          if(addToFile.isSelected()) {
+            out.write(first + " * " + second + " = " + result + "\n");
+          }
+          multiplyAction = false;
+        }
+
+        // dividing
+        if(divideAction) {
+          StringBuilder sbuild = new StringBuilder(second);
+          sbuild.deleteCharAt(0);
+          second = sbuild.toString();
+          result = MathActions.divide(first, second);
+          text.setText(String.valueOf(result));
+          if(addToFile.isSelected()) {
+            out.write(first + " / " + second + " = " + result + "\n");
+          }
+          divideAction = false;
+        }
+
+        if(isError) {
+          text.setText("Error");
+        }
+        isError = false;
+        first = "";
+        second = "";
+        return;
+      } catch(IOException exc) {
+        text.setText("Can't write in file");
       }
-
-      //minusing
-      if(minusAction) {
-        StringBuilder sbuild = new StringBuilder(second);
-        sbuild.deleteCharAt(0);
-        second = sbuild.toString();
-        text.setText(String.valueOf(actions.minus(first, second, answerCheck)));
-        minusAction = false;
-      }
-
-      // multiplying
-      if(multiplyAction) {
-        StringBuilder sbuild = new StringBuilder(second);
-        sbuild.deleteCharAt(0);
-        second = sbuild.toString();
-        text.setText(String.valueOf(actions.multiply(first, second, answerCheck)));
-        multiplyAction = false;
-      }
-
-      // dividing
-      if(divideAction) {
-        StringBuilder sbuild = new StringBuilder(second);
-        sbuild.deleteCharAt(0);
-        second = sbuild.toString();
-        text.setText(String.valueOf(actions.divide(first, second, answerCheck)));
-        divideAction = false;
-      }
-
-      if(isError) text.setText("Error");
-      isError = false;
-      first = "";
-      second = "";
-      return;
     }
 
     if(event.getActionCommand().equals("-")) {
@@ -245,6 +286,6 @@ public class Calculator implements ActionListener {
   }
 
   public static void setError(boolean value) {
-    isError = value; // set method
+    isError = value;
   }
 }
