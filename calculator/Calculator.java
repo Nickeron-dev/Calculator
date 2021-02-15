@@ -33,11 +33,19 @@ public class Calculator implements ActionListener {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setBackground(new Color(255, 1, 0));
 
-    // initializing other elements
+    // configuring other elements
     text = new JTextField(16);
     text.setFont(fontForBoxAndText);
-    text.setEditable(false);
-      // I'll maybe add pressing buttons and writing it in calculator
+    text.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyTyped(KeyEvent e) { // it allows to input only numbers
+        char c = e.getKeyChar();
+        if (!Character.isDigit(c)) { // if not number just ignore it
+            e.consume();
+        }
+      }
+    });
+    //text.setEditable(false); // possible but it ignores numbers, too
 
     discription = new JTextField(15);
     discription.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
@@ -82,7 +90,7 @@ public class Calculator implements ActionListener {
     zero.addActionListener(this);
     zero.setFont(fontForButtons);
 
-    equals = new JButton("=");
+    equals = new JButton("= ");
     equals.addActionListener(this);
     equals.setFont(fontForButtons);
 
@@ -128,9 +136,9 @@ public class Calculator implements ActionListener {
 
     addToFile = new JCheckBox("Add to file", true);
     // ItemListener is not necessary here
-
     addToFile.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
 
+    // adding all elements
     frame.add(text);
     frame.add(clear);
     frame.add(one);
@@ -150,7 +158,7 @@ public class Calculator implements ActionListener {
     frame.add(pi);
     frame.add(dot);
     frame.add(zero);
-    frame.add(root);
+    //frame.add(root);
     frame.add(equals);
     frame.add(discription);
     frame.add(submit);
@@ -189,7 +197,7 @@ public class Calculator implements ActionListener {
       return;
     }
 
-    if(event.getActionCommand().equals("=")) {
+    if(event.getActionCommand().equals("= ")) {
       second = text.getText();
       double result;
 
