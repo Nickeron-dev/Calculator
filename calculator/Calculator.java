@@ -164,6 +164,7 @@ public class Calculator implements ActionListener {
     frame.add(submit);
     frame.add(addToFile);
 
+    SwingUtilities.updateComponentTreeUI(frame); // making correct size
     frame.setVisible(true); // making it visible
     frame.setResizable(false); // making it unresizable
   }
