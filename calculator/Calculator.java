@@ -29,7 +29,7 @@ public class Calculator implements ActionListener {
     // settings for frame
     frame = new JFrame("Calculator");
     frame.setLayout(new FlowLayout());
-    frame.setSize(510, 680);
+    frame.setSize(600, 770);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setBackground(new Color(255, 1, 0));
 
@@ -122,11 +122,11 @@ public class Calculator implements ActionListener {
     root.addActionListener(this);
     root.setFont(fontForButtons);
 
-    pi = new JButton("π");
+    pi = new JButton("P");
     pi.addActionListener(this);
     pi.setFont(fontForButtons);
 
-    back = new JButton("←");
+    back = new JButton("c");
     back.addActionListener(this);
     back.setFont(fontForButtons);
 
@@ -190,7 +190,7 @@ public class Calculator implements ActionListener {
       return;
     }
 
-    if(event.getActionCommand().equals("←")) {
+    if(event.getActionCommand().equals("c")) {
       StringBuffer sb = new StringBuffer(text.getText());
       sb.deleteCharAt(text.getText().length() - 1);
       String str = sb.toString();

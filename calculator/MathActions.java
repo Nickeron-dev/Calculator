@@ -12,13 +12,13 @@ public class MathActions {
       double answer = Math.PI + Math.PI;
 
       // if first value is π
-      if(first.equals("π")) {
+      if(first.equals("P")) {
         firstValue = Math.PI;
         isFirstReady = true;
       }
 
       // if second value is π
-      if(second.equals("π")) {
+      if(second.equals("P")) {
         secondValue = Math.PI;
         isSecondReady = true;
       }
@@ -50,13 +50,13 @@ public class MathActions {
       double answer = Math.PI - Math.PI;
 
       // if first value is π
-      if(first.equals("π")) {
+      if(first.equals("P")) {
         firstValue = Math.PI;
         isFirstReady = true;
       }
 
       // if second value is π
-      if(second.equals("π")) {
+      if(second.equals("P")) {
         secondValue = Math.PI;
         isSecondReady = true;
       }
@@ -86,13 +86,13 @@ public class MathActions {
       double answer = Math.PI * Math.PI;
 
       // if first value is π
-      if(first.equals("π")) {
+      if(first.equals("P")) {
         firstValue = Math.PI;
         isFirstReady = true;
       }
 
       // if second value is π
-      if(second.equals("π")) {
+      if(second.equals("P")) {
         secondValue = Math.PI;
         isSecondReady = true;
       }
@@ -122,13 +122,13 @@ public class MathActions {
       double answer = Math.PI / Math.PI;
 
       // if first value is π
-      if(first.equals("π")) {
+      if(first.equals("P")) {
         firstValue = Math.PI;
         isFirstReady = true;
       }
 
       // if second value is π
-      if(second.equals("π")) {
+      if(second.equals("P")) {
         secondValue = Math.PI;
         isSecondReady = true;
       }
